@@ -1,0 +1,17 @@
+{
+  "format" : "ritmo",
+  "version" : 1,
+  "workouts" : [
+    {
+      "name" : "HIIT 60/15",
+      "prepare" : 10,
+      "intervals" : [
+        { "kind" : "work", "name" : "Work", "seconds" : 60 },
+        { "kind" : "rest", "name" : "Rest", "seconds" : 15 }
+      ],
+      "rounds" : 6,
+      "cycles" : 5,
+      "cycleRest" : 45
+    }
+  ]
+}

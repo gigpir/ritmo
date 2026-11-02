@@ -1,0 +1,11 @@
+// Signing for your own iPhone. Put your values in Config/Local.xcconfig, which stays out of git:
+//
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   RITMO_BUNDLE_PREFIX = com.yourname
+//
+// The team is shown in Xcode → Settings → Apple Accounts. The prefix makes the app's
+// identifier, $(RITMO_BUNDLE_PREFIX).ritmo, yours: Apple accepts each one only once.
+
+RITMO_BUNDLE_PREFIX = io.github.gigpir
+
+#include? "Local.xcconfig"
