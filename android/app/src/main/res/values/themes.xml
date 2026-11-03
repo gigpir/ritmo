@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark only, like the iPhone app. Compose draws everything; this sets the window
+         behind it and the colours of the platform's number pickers. -->
+    <style name="Theme.Ritmo" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorAccent">@color/work</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <color name="background">#FF0E0E10</color>
+    <color name="work">#FFFF5A1F</color>
+</resources>

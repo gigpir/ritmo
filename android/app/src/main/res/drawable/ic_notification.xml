@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The R in white, the only colour Android keeps in the status bar. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group
+        android:pivotX="517"
+        android:pivotY="512"
+        android:scaleX="1.45"
+        android:scaleY="1.45">
+        <path
+            android:fillColor="#FFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M333,210L548,210A142,142 0,0 1,690 352L690,462C690,515 670,548 641,569L701,815L545,815L500,600L484,600L484,815L333,815ZM484,328L506,328A34,34 0,0 1,540 362L540,456A34,34 0,0 1,506 490L484,490Z" />
+    </group>
+</vector>

@@ -1,6 +1,6 @@
 # Ritmo
 
-A simple interval timer for iPhone, made for the gym: free, no account, no ads, no tracking, works offline.
+A simple interval timer for iPhone and Android, made for the gym: free, no account, no ads, no tracking, works offline.
 
 Ritmo replaces an interval timer that, after years of use, started asking for a paid licence just to start a workout.
 
@@ -20,8 +20,8 @@ Ritmo replaces an interval timer that, after years of use, started asking for a 
 - **Workouts the way gyms count them.** A Prepare phase, then work and rest intervals repeated for a number of *rounds*. The rounds can repeat for several *cycles*, with a longer rest between cycles. The last rest before a cycle rest, or before the end, is skipped.
 - **A timer you can read from across the room.** In portrait, the colour of the phase fills the screen and drains like a tide, and the digits change colour where the level crosses them. In landscape it becomes a scoreboard.
 - **Cues you can hear.** A beep at 3, 2 and 1 seconds, then a voice reads the new phase: "Prepare", "Work", "Rest", "Recover". The cues play over your music, which gets quieter while they play, and the phone vibrates at every change.
-- **Works with the phone locked**, and shows the countdown on the lock screen and in the Dynamic Island.
-- **Workouts you can share** as `.ritmo` files, by AirDrop, Messages or Files. Opening one on an iPhone with Ritmo adds its workouts.
+- **Works with the phone locked**, and shows the countdown on the lock screen: in the Dynamic Island on iPhone, in a notification on Android.
+- **Workouts you can share** as `.ritmo` files, the same on iPhone and Android. Opening one on a phone with Ritmo adds its workouts.
 
 It comes with Tabata, HIIT 60/15, HIIT 40/20, Boxing and a full-body circuit, all editable.
 
@@ -60,6 +60,10 @@ With a free Apple ID the signature lasts 7 days, so press Run again once a week;
 
 To install it without Xcode, `./ipa.sh` builds an unsigned `build/Ritmo.ipa` for SideStore, AltStore or Sideloadly, which sign it with the Apple ID of whoever installs it. `./ipa.sh --signed` builds `build/Ritmo-signed.ipa`, signed with your own team for your own iPhone, to install with Apple Configurator; that file contains your Apple ID, so keep it to yourself.
 
+## Install it on Android
+
+Ritmo for Android needs Android 8.0 or later and isn't in a store yet. To build it, open the `android` folder in Android Studio and press Run with your phone connected, or run `./gradlew installDebug` in `android` with USB debugging on.
+
 ## The `.ritmo` format
 
 It's JSON, so it can be written by hand; missing ids are created on import.
@@ -88,7 +92,7 @@ This one is in [examples](examples/HIIT%2060-15.ritmo).
 
 ## Code
 
-SwiftUI, iOS 17 or later, no dependencies.
+The iPhone app is SwiftUI, for iOS 17 or later, with no dependencies.
 
 | Folder | What's inside |
 |---|---|
@@ -100,3 +104,13 @@ SwiftUI, iOS 17 or later, no dependencies.
 | `Tests` | tests for `Ritmo/Core` |
 
 Run the tests on a Mac with `swift test`; `Package.swift` exists only for that.
+
+The Android app is in `android`: Kotlin and Jetpack Compose, for Android 8.0 or later, with no dependencies beyond AndroidX. Its tests are the iPhone's, translated, so the two apps count workouts alike; run them with `./gradlew test` in `android`.
+
+| Folder, in `android/app/src/main/java/io/github/gigpir/ritmo` | What's inside |
+|---|---|
+| `core` | workouts, steps, the clock, the cues and the `.ritmo` format, without Android; covered by tests |
+| the folder itself | the list of workouts, settings, beeps and voice, and the service that keeps a workout running with its notification |
+| `ui` | the list, the editor, the timer (tide and scoreboard) and settings |
+
+The F-Droid listing, with its descriptions and screenshots, is in `fastlane`.

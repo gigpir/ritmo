@@ -1,0 +1,15 @@
+Ritmo is a simple interval timer for the gym: Tabata, HIIT, boxing rounds and circuits.
+
+It is free and open source, with no ads, no tracking and no paywall. It needs no account and works offline: Ritmo doesn't even have permission to use the internet, so your workouts stay on your phone.
+
+<ul>
+<li><b>Workouts the way gyms count them.</b> A Prepare phase, then work and rest intervals repeated for a number of rounds. The rounds can repeat for several cycles, with a longer rest between cycles.</li>
+<li><b>A timer you can read from across the room.</b> In portrait the colour of the phase fills the screen and drains like a tide; in landscape it becomes a scoreboard.</li>
+<li><b>Cues you can hear.</b> A beep at 3, 2 and 1 seconds, then a voice reads the new phase: "Prepare", "Work", "Rest", "Recover". The cues play over your music, which gets quieter while they play, and the phone vibrates at every change.</li>
+<li><b>Works with the screen off,</b> with the countdown in a notification on the lock screen.</li>
+<li><b>Workouts you can share</b> as .ritmo files, the same as Ritmo for iPhone.</li>
+</ul>
+
+It comes with Tabata, HIIT 60/15, HIIT 40/20, Boxing and a full-body circuit, all editable.
+
+Permissions: the notification and the foreground service show the countdown and keep the timer running with the screen off; vibration marks every phase.

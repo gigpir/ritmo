@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The R alone, for themed icons that Android tints with the wallpaper's colours. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.8"
+        android:scaleY="0.8">
+        <path
+            android:fillColor="#000000"
+            android:fillType="evenOdd"
+            android:pathData="M333,210L548,210A142,142 0,0 1,690 352L690,462C690,515 670,548 641,569L701,815L545,815L500,600L484,600L484,815L333,815ZM484,328L506,328A34,34 0,0 1,540 362L540,456A34,34 0,0 1,506 490L484,490Z" />
+    </group>
+</vector>

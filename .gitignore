@@ -7,3 +7,9 @@ xcuserdata/
 *.xcuserstate
 Config/Local.xcconfig
 *.ipa
+.gradle/
+.idea/
+*.iml
+local.properties
+*.apk
+*.aab
