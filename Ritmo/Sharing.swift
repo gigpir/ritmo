@@ -7,16 +7,27 @@ extension UTType {
     static let ritmoWorkouts = UTType(exportedAs: "io.github.gigpir.ritmo.workouts")
 }
 
-/// Workouts as a `.ritmo` file for the share sheet: AirDrop, Messages, Mail, Files.
+/// Workouts as a `.ritmo` file for the share sheet: AirDrop, Messages, Mail, Files, chat apps.
+/// It hands over a real file: given only its data, WhatsApp and Telegram wait for one forever.
 struct SharedWorkouts: Transferable {
     let workouts: [Workout]
     let fileName: String
 
     static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .ritmoWorkouts) { shared in
-            try WorkoutFile.encode(shared.workouts)
+        FileRepresentation(exportedContentType: .ritmoWorkouts) { shared in
+            SentTransferredFile(try shared.writeFile())
         }
-        .suggestedFileName { "\($0.fileName).ritmo" }
+    }
+
+    /// Writes the file under a name a file can have ("HIIT 60/15" becomes "HIIT 60-15.ritmo"), in a temporary folder
+    /// of its own: the share sheet and the receiving app can ask for it at the same time.
+    private func writeFile() throws -> URL {
+        let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let name = fileName.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")
+        let url = folder.appending(path: "\(name).ritmo")
+        try WorkoutFile.encode(workouts).write(to: url)
+        return url
     }
 }
 
