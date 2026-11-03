@@ -115,6 +115,10 @@ The Android app is in `android`: Kotlin and Jetpack Compose, for Android 8.0 or 
 
 The F-Droid listing, with its descriptions and screenshots, is in `fastlane`.
 
+## Support
+
+Ritmo is free and has no ads. If it helps your training, you can buy me a coffee on [Ko-fi](https://ko-fi.com/gigpir).
+
 ## License
 
 Ritmo is free software, released under the GNU General Public License version 3: see [LICENSE](LICENSE).

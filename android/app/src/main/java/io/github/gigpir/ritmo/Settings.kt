@@ -51,5 +51,5 @@ class Settings(context: Context) {
 
 /** Where the Donate button leads. While it's empty, Ritmo never asks. */
 object Donation {
-    const val URL = ""
+    const val URL = "https://ko-fi.com/gigpir"
 }
