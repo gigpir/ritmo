@@ -13,7 +13,7 @@ struct StepTests {
     }
 
     @Test func sampleDurations() {
-        // Tabata 4:00, HIIT 60/15 39:25, HIIT 40/20 9:50, Boxing 47:10, circuit 12:10 (SPEC §3)
+        // Tabata 4:00, HIIT 60/15 39:25, HIIT 40/20 9:50, Boxing 47:10, circuit 12:10
         #expect(Workout.samples.map(\.duration) == [240, 2365, 590, 2830, 730])
     }
 

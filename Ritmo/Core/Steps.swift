@@ -1,6 +1,6 @@
 import Foundation
 
-/// One step of a running workout (SPEC §4.1).
+/// One step of a running workout.
 struct Step: Hashable {
     /// `recover` is the rest between cycles.
     enum Phase: String { case prepare, work, rest, recover }
@@ -17,7 +17,7 @@ struct Step: Hashable {
 }
 
 extension Workout {
-    /// The workout as a flat list of steps, with the last-Rest rule applied (SPEC §4.1–4.2).
+    /// The workout as a flat list of steps, with the last-Rest rule applied.
     var steps: [Step] {
         var raw: [Step] = []
         func add(_ name: String, _ phase: Step.Phase, _ seconds: Int, round: Int, cycle: Int) {

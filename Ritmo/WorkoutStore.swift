@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-/// Every workout in list order, saved to one JSON file (SPEC §3).
+/// Every workout in list order, saved to one JSON file.
 @Observable final class WorkoutStore {
     private(set) var workouts: [Workout]
     private let url: URL

@@ -3,7 +3,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 extension UTType {
-    /// A `.ritmo` file with one or more workouts, declared in Config/Info.plist (SPEC §5.7).
+    /// A `.ritmo` file with one or more workouts, declared in Config/Info.plist.
     static let ritmoWorkouts = UTType(exportedAs: "io.github.gigpir.ritmo.workouts")
 }
 

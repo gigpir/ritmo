@@ -1,6 +1,6 @@
 import Foundation
 
-/// The `.ritmo` file for sharing workouts (SPEC §5.7): JSON with a format name and a
+/// The `.ritmo` file for sharing workouts: JSON with a format name and a
 /// version, so a later Ritmo can still read the files written today.
 struct WorkoutFile: Codable {
     var format: String? = "ritmo"

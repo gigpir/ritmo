@@ -1,7 +1,7 @@
 import AVFoundation
 import AudioToolbox
 
-/// Beeps, voice and vibration, mixed over the user's music (SPEC §4.4, §6).
+/// Beeps, voice and vibration, mixed over the user's music.
 final class CuePlayer: NSObject, AVSpeechSynthesizerDelegate {
     var isMuted = false
     /// Called when a phone call or Siri takes over the audio.

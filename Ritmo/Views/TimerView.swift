@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The workout screen: Marea in portrait, Tabellone in landscape (SPEC §5.3–5.4).
+/// The workout screen: Marea in portrait, Tabellone in landscape.
 /// It opens ready on the first step; Play starts it.
 struct TimerView: View {
     @State private var model: TimerModel

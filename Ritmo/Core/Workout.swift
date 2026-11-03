@@ -1,6 +1,6 @@
 import Foundation
 
-/// A saved workout (SPEC §3): an optional Prepare, then the intervals repeated
+/// A saved workout: an optional Prepare, then the intervals repeated
 /// `rounds` times, and that block repeated `cycles` times with an optional
 /// rest between cycles, announced as "Recover".
 struct Workout: Hashable, Identifiable {
@@ -84,7 +84,7 @@ extension Workout {
         Workout(name: "", intervals: [.work(20), .rest(10)], rounds: 8)
     }
 
-    /// The workouts found on first launch (SPEC §5.1).
+    /// The workouts found on first launch.
     static let samples: [Workout] = [
         Workout(name: "Tabata", intervals: [.work(20), .rest(10)], rounds: 8),
         Workout(name: "HIIT 60/15", intervals: [.work(60), .rest(15)], rounds: 6, cycles: 5, cycleRest: 45),
@@ -133,7 +133,7 @@ extension Workout {
     }
 }
 
-/// Times as the app shows them: "0:09", "12:00", "1:02:30" (SPEC §4.3).
+/// Times as the app shows them: "0:09", "12:00", "1:02:30".
 func clockText(_ seconds: Int) -> String {
     let h = seconds / 3600, m = seconds / 60 % 60, s = seconds % 60
     return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%d:%02d", m, s)

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The neutral colours of the dark interface (SPEC §5); the phase colours are in `Palette`.
+/// The neutral colours of the dark interface; the phase colours are in `Palette`.
 enum Theme {
     static let background = Color(hex: 0x0E0E10)
     static let surface = Color(hex: 0x17171A)

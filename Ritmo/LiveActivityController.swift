@@ -1,7 +1,7 @@
 import ActivityKit
 import Foundation
 
-/// Shows the running workout on the lock screen and in the Dynamic Island (SPEC §5.6).
+/// Shows the running workout on the lock screen and in the Dynamic Island.
 @MainActor final class LiveActivityController {
     private var activity: Activity<WorkoutActivity>?
 

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Three switches, all on by default, and the workouts to share or import (SPEC §5.5, §5.7).
+/// Three switches, all on by default, and the workouts to share or import.
 struct SettingsView: View {
     @AppStorage("voice") private var voice = true
     @AppStorage("vibration") private var vibration = true

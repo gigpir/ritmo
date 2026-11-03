@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The home screen: every saved workout, the last one used first (SPEC §5.1).
+/// The home screen: every saved workout, the last one used first.
 struct WorkoutListView: View {
     @Environment(WorkoutStore.self) private var store
     @State private var editing: Workout?

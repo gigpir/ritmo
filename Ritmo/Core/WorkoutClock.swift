@@ -1,6 +1,6 @@
 import Foundation
 
-/// Where a workout stands, computed from timestamps instead of counted ticks (SPEC §4.3),
+/// Where a workout stands, computed from timestamps instead of counted ticks,
 /// so it stays right after the screen locks or the app sleeps.
 struct WorkoutClock {
     let steps: [Step]
@@ -83,7 +83,7 @@ struct TimerSnapshot: Equatable {
     var finished: Bool
 }
 
-/// Sounds and announcements of the timer (SPEC §4.4).
+/// Sounds and announcements of the timer.
 enum Cue: Equatable {
     case beep
     case announce(String)

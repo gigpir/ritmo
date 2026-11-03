@@ -9,7 +9,7 @@ struct RitmoLiveBundle: WidgetBundle {
     }
 }
 
-/// The running workout on the lock screen and in the Dynamic Island (SPEC §5.6).
+/// The running workout on the lock screen and in the Dynamic Island.
 struct WorkoutLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: WorkoutActivity.self) { context in

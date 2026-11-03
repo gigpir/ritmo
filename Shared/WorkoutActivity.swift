@@ -1,7 +1,7 @@
 import ActivityKit
 import Foundation
 
-/// What the lock screen and the Dynamic Island show during a workout (SPEC §5.6).
+/// What the lock screen and the Dynamic Island show during a workout.
 struct WorkoutActivity: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         /// The step's name, e.g. "Work".

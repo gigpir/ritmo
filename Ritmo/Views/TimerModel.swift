@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// One workout on screen: it opens ready, and from the first Play it runs the clock,
-/// the cues, the Live Activity and keeps the screen awake (SPEC §4.3–4.4, §5.6).
+/// the cues, the Live Activity and keeps the screen awake.
 @MainActor @Observable final class TimerModel {
     let workout: Workout
     let steps: [Step]

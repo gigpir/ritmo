@@ -10,7 +10,7 @@ extension Color {
     }
 }
 
-/// The colours of each phase (SPEC §5), shared by the app and its Live Activity.
+/// The colours of each phase, shared by the app and its Live Activity.
 /// Phases are named as in `Step.Phase`: prepare, work, rest, recover.
 enum Palette {
     /// The phase colour: tide, digits and strip.
