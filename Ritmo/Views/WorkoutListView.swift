@@ -56,10 +56,14 @@ struct WorkoutListView: View {
         }
         #if DEBUG
         .task {
-            // Screenshots from the terminal: `xcrun simctl launch … -openWorkout 0 [-autostart YES]`.
+            // Screenshots from the terminal: `xcrun simctl launch … -openWorkout 0 [-autostart YES]`, or `-editWorkout 0`.
             if UserDefaults.standard.object(forKey: "openWorkout") != nil {
                 let i = UserDefaults.standard.integer(forKey: "openWorkout")
                 if store.workouts.indices.contains(i) { running = store.workouts[i] }
+            }
+            if UserDefaults.standard.object(forKey: "editWorkout") != nil {
+                let i = UserDefaults.standard.integer(forKey: "editWorkout")
+                if store.workouts.indices.contains(i) { editing = store.workouts[i] }
             }
         }
         #endif

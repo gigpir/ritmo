@@ -19,43 +19,46 @@ struct EditorView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section { preview }
-                Section {
-                    TextField("Name", text: $workout.name)
-                }
-                Section {
-                    DurationRow(title: "Prepare", color: Step.Phase.prepare.bright, seconds: $workout.prepare, allowsNone: true)
-                }
-                Section {
-                    ForEach(workout.intervals) { interval in
-                        IntervalRow(interval: binding(for: interval.id)) {
-                            workout.intervals.removeAll { $0.id == interval.id }
+            ScrollViewReader { proxy in
+                Form {
+                    Section { preview }
+                    Section {
+                        TextField("Name", text: $workout.name)
+                    }
+                    Section {
+                        DurationRow(title: "Prepare", color: Step.Phase.prepare.bright, seconds: $workout.prepare, allowsNone: true)
+                    }
+                    Section {
+                        ForEach(workout.intervals) { interval in
+                            IntervalRow(interval: binding(for: interval.id)) {
+                                workout.intervals.removeAll { $0.id == interval.id }
+                            }
                         }
+                        .onMove { workout.intervals.move(fromOffsets: $0, toOffset: $1) }
+                        .onDelete { workout.intervals.remove(atOffsets: $0) }
+                        Button("Add interval", systemImage: "plus", action: addInterval)
+                        Stepper(value: $workout.rounds, in: 1...99) {
+                            countLabel("Rounds", workout.rounds)
+                        }
+                    } header: {
+                        Text("Intervals")
+                    } footer: {
+                        Text("Tap an interval to set its time. Hold it to rename it, switch between Work and Rest, or delete it.")
                     }
-                    .onMove { workout.intervals.move(fromOffsets: $0, toOffset: $1) }
-                    .onDelete { workout.intervals.remove(atOffsets: $0) }
-                    Button("Add interval", systemImage: "plus", action: addInterval)
-                    Stepper(value: $workout.rounds, in: 1...99) {
-                        countLabel("Rounds", workout.rounds)
+                    Section {
+                        Stepper(value: $workout.cycles, in: 1...20) {
+                            countLabel("Cycles", workout.cycles)
+                        }
+                        DurationRow(title: "Rest between cycles", color: Step.Phase.recover.bright, seconds: $workout.cycleRest, allowsNone: true)
+                            .disabled(workout.cycles == 1)
+                            .opacity(workout.cycles == 1 ? 0.4 : 1)
+                    } header: {
+                        Text("Cycles")
+                    } footer: {
+                        Text("A cycle is all the rounds above. The rest between cycles is announced as \"Recover\".")
                     }
-                } header: {
-                    Text("Intervals")
-                } footer: {
-                    Text("Tap an interval to set its time. Hold it to rename it, switch between Work and Rest, or delete it.")
                 }
-                Section {
-                    Stepper(value: $workout.cycles, in: 1...20) {
-                        countLabel("Cycles", workout.cycles)
-                    }
-                    DurationRow(title: "Rest between cycles", color: Step.Phase.recover.bright, seconds: $workout.cycleRest, allowsNone: true)
-                        .disabled(workout.cycles == 1)
-                        .opacity(workout.cycles == 1 ? 0.4 : 1)
-                } header: {
-                    Text("Cycles")
-                } footer: {
-                    Text("A cycle is all the rounds above. The rest between cycles is announced as \"Recover\".")
-                }
+                .environment(\.editorScroll, proxy)
             }
             .navigationTitle(isNew ? "New workout" : "Edit workout")
             .navigationBarTitleDisplayMode(.inline)
@@ -123,6 +126,19 @@ struct EditorView: View {
     }
 }
 
+extension EnvironmentValues {
+    /// The editor's form, which a row scrolls to show its wheels when they open.
+    @Entry var editorScroll: ScrollViewProxy? = nil
+}
+
+private extension ScrollViewProxy {
+    /// Scrolls the least it can to show the view with this id. Rows call it from onChange,
+    /// while the form updates: their opened wheels are one of its rows only after that.
+    func reveal(_ id: String) {
+        DispatchQueue.main.async { withAnimation { scrollTo(id) } }
+    }
+}
+
 /// An interval edited in place: a tap opens its wheels, holding it offers the rest.
 private struct IntervalRow: View {
     @Binding var interval: Interval
@@ -130,6 +146,7 @@ private struct IntervalRow: View {
     @State private var isOpen = false
     @State private var isRenaming = false
     @State private var newName = ""
+    @Environment(\.editorScroll) private var editorScroll
 
     var body: some View {
         Button {
@@ -155,12 +172,16 @@ private struct IntervalRow: View {
             Button("Cancel", role: .cancel) {}
             Button("Save") { interval.name = newName.trimmingCharacters(in: .whitespaces) }
         }
+        .onChange(of: isOpen) { if isOpen { editorScroll?.reveal(wheelsID) } }
         if isOpen {
             DurationWheels(seconds: $interval.seconds, allowsNone: false)
                 .frame(maxWidth: .infinity)
                 .frame(height: 160)
+                .id(wheelsID)
         }
     }
+
+    private var wheelsID: String { "\(interval.id) wheels" }
 
     /// A Work becomes a Rest and the other way round; a default name follows the kind.
     private func switchKind() {
@@ -177,6 +198,7 @@ struct DurationRow: View {
     @Binding var seconds: Int
     var allowsNone = false
     @State private var isOpen = false
+    @Environment(\.editorScroll) private var editorScroll
 
     var body: some View {
         Button {
@@ -184,12 +206,16 @@ struct DurationRow: View {
         } label: {
             DurationLabel(title: title, color: color, seconds: seconds, isOpen: isOpen)
         }
+        .onChange(of: isOpen) { if isOpen { editorScroll?.reveal(wheelsID) } }
         if isOpen {
             DurationWheels(seconds: $seconds, allowsNone: allowsNone)
                 .frame(maxWidth: .infinity)
                 .frame(height: 160)
+                .id(wheelsID)
         }
     }
+
+    private var wheelsID: String { "\(title) wheels" }
 }
 
 /// A dot in the phase colour, a name and a duration, or "None".

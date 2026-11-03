@@ -152,6 +152,8 @@ In cima ci sono la durata totale e la striscia, che si aggiornano mentre modific
 
 Ogni intervallo si regola nella lista stessa: un tocco apre sotto di lui la rotella di minuti e secondi, come nell'app Orologio. Tenendolo premuto puoi rinominarlo, trasformarlo da Work in Rest (o viceversa) ed eliminarlo. "Add interval" aggiunge un Rest dopo un Work, e un Work dopo un Rest.
 
+Prepare e Rest between cycles si regolano allo stesso modo. Se una rotella si apre vicino al fondo dello schermo, il modulo scorre da solo quanto basta per mostrarla intera; se è già tutta visibile, resta fermo.
+
 Niente schermata separata per l'intervallo: il selettore Work/Rest che c'era dentro veniva scambiato per due schede da configurare, mentre cambiava il tipo dell'intervallo.
 
 ### 5.3 Timer in verticale: Marea
