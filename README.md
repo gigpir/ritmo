@@ -1,6 +1,6 @@
 # Ritmo
 
-A simple interval timer for iPhone and Android, made for the gym: free, no account, no ads, no tracking, works offline.
+A simple interval timer for iPhone and Android, made for the gym: free and open source, no account, no ads, no tracking, works offline.
 
 Ritmo replaces an interval timer that, after years of use, started asking for a paid licence just to start a workout.
 
@@ -114,3 +114,7 @@ The Android app is in `android`: Kotlin and Jetpack Compose, for Android 8.0 or 
 | `ui` | the list, the editor, the timer (tide and scoreboard) and settings |
 
 The F-Droid listing, with its descriptions and screenshots, is in `fastlane`.
+
+## License
+
+Ritmo is free software, released under the GNU General Public License version 3: see [LICENSE](LICENSE).
