@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// One workout as a single form (SPEC §5.2).
+/// One workout as a single form.
 struct EditorView: View {
     @State private var workout: Workout
     let isNew: Bool
     let onSave: (Workout) -> Void
+    /// The duration whose wheels are open: one at a time, so the form stays short.
+    @State private var openWheels: String?
     @Environment(\.dismiss) private var dismiss
 
     init(workout: Workout, isNew: Bool, onSave: @escaping (Workout) -> Void) {
@@ -26,11 +28,11 @@ struct EditorView: View {
                         TextField("Name", text: $workout.name)
                     }
                     Section {
-                        DurationRow(title: "Prepare", color: Step.Phase.prepare.bright, seconds: $workout.prepare, allowsNone: true)
+                        DurationRow(title: "Prepare", color: Step.Phase.prepare.bright, seconds: $workout.prepare, allowsNone: true, openWheels: $openWheels)
                     }
                     Section {
                         ForEach(workout.intervals) { interval in
-                            IntervalRow(interval: binding(for: interval.id)) {
+                            IntervalRow(interval: binding(for: interval.id), openWheels: $openWheels) {
                                 workout.intervals.removeAll { $0.id == interval.id }
                             }
                         }
@@ -49,7 +51,7 @@ struct EditorView: View {
                         Stepper(value: $workout.cycles, in: 1...20) {
                             countLabel("Cycles", workout.cycles)
                         }
-                        DurationRow(title: "Rest between cycles", color: Step.Phase.recover.bright, seconds: $workout.cycleRest, allowsNone: true)
+                        DurationRow(title: "Rest between cycles", color: Step.Phase.recover.bright, seconds: $workout.cycleRest, allowsNone: true, openWheels: $openWheels)
                             .disabled(workout.cycles == 1)
                             .opacity(workout.cycles == 1 ? 0.4 : 1)
                     } header: {
@@ -58,7 +60,12 @@ struct EditorView: View {
                         Text("A cycle is all the rounds above. The rest between cycles is announced as \"Recover\".")
                     }
                 }
-                .environment(\.editorScroll, proxy)
+                .onChange(of: openWheels) {
+                    guard let id = openWheels else { return }
+                    // Called while the form updates: the opened wheels are one of its rows only after that.
+                    // With no anchor, the form scrolls the least it can to show them whole.
+                    DispatchQueue.main.async { withAnimation { proxy.scrollTo(id) } }
+                }
             }
             .navigationTitle(isNew ? "New workout" : "Edit workout")
             .navigationBarTitleDisplayMode(.inline)
@@ -126,31 +133,17 @@ struct EditorView: View {
     }
 }
 
-extension EnvironmentValues {
-    /// The editor's form, which a row scrolls to show its wheels when they open.
-    @Entry var editorScroll: ScrollViewProxy? = nil
-}
-
-private extension ScrollViewProxy {
-    /// Scrolls the least it can to show the view with this id. Rows call it from onChange,
-    /// while the form updates: their opened wheels are one of its rows only after that.
-    func reveal(_ id: String) {
-        DispatchQueue.main.async { withAnimation { scrollTo(id) } }
-    }
-}
-
 /// An interval edited in place: a tap opens its wheels, holding it offers the rest.
 private struct IntervalRow: View {
     @Binding var interval: Interval
+    @Binding var openWheels: String?
     let delete: () -> Void
-    @State private var isOpen = false
     @State private var isRenaming = false
     @State private var newName = ""
-    @Environment(\.editorScroll) private var editorScroll
 
     var body: some View {
         Button {
-            withAnimation { isOpen.toggle() }
+            withAnimation { openWheels = isOpen ? nil : wheelsID }
         } label: {
             DurationLabel(
                 title: interval.name.isEmpty ? interval.kind.defaultName : interval.name,
@@ -172,7 +165,6 @@ private struct IntervalRow: View {
             Button("Cancel", role: .cancel) {}
             Button("Save") { interval.name = newName.trimmingCharacters(in: .whitespaces) }
         }
-        .onChange(of: isOpen) { if isOpen { editorScroll?.reveal(wheelsID) } }
         if isOpen {
             DurationWheels(seconds: $interval.seconds, allowsNone: false)
                 .frame(maxWidth: .infinity)
@@ -182,6 +174,7 @@ private struct IntervalRow: View {
     }
 
     private var wheelsID: String { "\(interval.id) wheels" }
+    private var isOpen: Bool { openWheels == wheelsID }
 
     /// A Work becomes a Rest and the other way round; a default name follows the kind.
     private func switchKind() {
@@ -197,16 +190,14 @@ struct DurationRow: View {
     let color: Color
     @Binding var seconds: Int
     var allowsNone = false
-    @State private var isOpen = false
-    @Environment(\.editorScroll) private var editorScroll
+    @Binding var openWheels: String?
 
     var body: some View {
         Button {
-            withAnimation { isOpen.toggle() }
+            withAnimation { openWheels = isOpen ? nil : wheelsID }
         } label: {
             DurationLabel(title: title, color: color, seconds: seconds, isOpen: isOpen)
         }
-        .onChange(of: isOpen) { if isOpen { editorScroll?.reveal(wheelsID) } }
         if isOpen {
             DurationWheels(seconds: $seconds, allowsNone: allowsNone)
                 .frame(maxWidth: .infinity)
@@ -216,6 +207,7 @@ struct DurationRow: View {
     }
 
     private var wheelsID: String { "\(title) wheels" }
+    private var isOpen: Bool { openWheels == wheelsID }
 }
 
 /// A dot in the phase colour, a name and a duration, or "None".
