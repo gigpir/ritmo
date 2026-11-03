@@ -27,19 +27,10 @@ struct EditorView: View {
                 Section {
                     DurationRow(title: "Prepare", color: Step.Phase.prepare.bright, seconds: $workout.prepare, allowsNone: true)
                 }
-                Section("Intervals") {
-                    ForEach($workout.intervals) { $interval in
-                        NavigationLink {
-                            IntervalEditor(interval: $interval)
-                        } label: {
-                            HStack(spacing: 12) {
-                                Circle().fill(interval.kind.color).frame(width: 12, height: 12)
-                                Text(interval.name.isEmpty ? interval.kind.defaultName : interval.name)
-                                Spacer()
-                                Text(clockText(interval.seconds))
-                                    .font(.condensed(20))
-                                    .monospacedDigit()
-                            }
+                Section {
+                    ForEach(workout.intervals) { interval in
+                        IntervalRow(interval: binding(for: interval.id)) {
+                            workout.intervals.removeAll { $0.id == interval.id }
                         }
                     }
                     .onMove { workout.intervals.move(fromOffsets: $0, toOffset: $1) }
@@ -48,6 +39,10 @@ struct EditorView: View {
                     Stepper(value: $workout.rounds, in: 1...99) {
                         countLabel("Rounds", workout.rounds)
                     }
+                } header: {
+                    Text("Intervals")
+                } footer: {
+                    Text("Tap an interval to set its time. Hold it to rename it, switch between Work and Rest, or delete it.")
                 }
                 Section {
                     Stepper(value: $workout.cycles, in: 1...20) {
@@ -111,6 +106,16 @@ struct EditorView: View {
         }
     }
 
+    /// The interval with this id, looked up on every read and write,
+    /// so an edit can only ever reach that interval.
+    private func binding(for id: Interval.ID) -> Binding<Interval> {
+        Binding {
+            workout.intervals.first { $0.id == id } ?? .work(0)
+        } set: { interval in
+            if let i = workout.intervals.firstIndex(where: { $0.id == id }) { workout.intervals[i] = interval }
+        }
+    }
+
     /// A Rest after a Work, a Work after a Rest.
     private func addInterval() {
         let kind: Interval.Kind = workout.intervals.last?.kind == .work ? .rest : .work
@@ -118,28 +123,50 @@ struct EditorView: View {
     }
 }
 
-private struct IntervalEditor: View {
+/// An interval edited in place: a tap opens its wheels, holding it offers the rest.
+private struct IntervalRow: View {
     @Binding var interval: Interval
+    let delete: () -> Void
+    @State private var isOpen = false
+    @State private var isRenaming = false
+    @State private var newName = ""
 
     var body: some View {
-        Form {
-            Section {
-                TextField("Name", text: $interval.name)
-            }
-            Section {
-                Picker("Type", selection: $interval.kind) {
-                    Text("Work").tag(Interval.Kind.work)
-                    Text("Rest").tag(Interval.Kind.rest)
-                }
-                .pickerStyle(.segmented)
-                DurationRow(title: "Duration", color: interval.kind.color, seconds: $interval.seconds, isOpen: true)
-            }
+        Button {
+            withAnimation { isOpen.toggle() }
+        } label: {
+            DurationLabel(
+                title: interval.name.isEmpty ? interval.kind.defaultName : interval.name,
+                color: interval.kind.color,
+                seconds: interval.seconds,
+                isOpen: isOpen
+            )
         }
-        .navigationTitle(interval.name.isEmpty ? "Interval" : interval.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: interval.kind) { old, new in
-            if interval.name == old.defaultName { interval.name = new.defaultName }
+        .contextMenu {
+            Button("Rename", systemImage: "pencil") {
+                newName = interval.name
+                isRenaming = true
+            }
+            Button(interval.kind == .work ? "Make it Rest" : "Make it Work", systemImage: "arrow.left.arrow.right", action: switchKind)
+            Button("Delete", systemImage: "trash", role: .destructive, action: delete)
         }
+        .alert("Rename interval", isPresented: $isRenaming) {
+            TextField(interval.kind.defaultName, text: $newName)
+            Button("Cancel", role: .cancel) {}
+            Button("Save") { interval.name = newName.trimmingCharacters(in: .whitespaces) }
+        }
+        if isOpen {
+            DurationWheels(seconds: $interval.seconds, allowsNone: false)
+                .frame(maxWidth: .infinity)
+                .frame(height: 160)
+        }
+    }
+
+    /// A Work becomes a Rest and the other way round; a default name follows the kind.
+    private func switchKind() {
+        let old = interval.kind
+        interval.kind = old == .work ? .rest : .work
+        if interval.name == old.defaultName { interval.name = interval.kind.defaultName }
     }
 }
 
@@ -149,51 +176,88 @@ struct DurationRow: View {
     let color: Color
     @Binding var seconds: Int
     var allowsNone = false
-    @State var isOpen = false
+    @State private var isOpen = false
 
     var body: some View {
         Button {
             withAnimation { isOpen.toggle() }
         } label: {
-            HStack(spacing: 12) {
-                Circle().fill(color).frame(width: 12, height: 12)
-                Text(title).foregroundStyle(Theme.text)
-                Spacer()
-                if seconds == 0 {
-                    Text("None").foregroundStyle(Theme.secondary)
-                } else {
-                    Text(clockText(seconds))
-                        .font(.condensed(20))
-                        .monospacedDigit()
-                        .foregroundStyle(isOpen ? color : Theme.text)
-                }
-            }
+            DurationLabel(title: title, color: color, seconds: seconds, isOpen: isOpen)
         }
         if isOpen {
-            HStack(spacing: 0) {
-                Picker("Minutes", selection: minutes) {
-                    ForEach(0..<100, id: \.self) { Text("\($0) min").tag($0) }
-                }
+            DurationWheels(seconds: $seconds, allowsNone: allowsNone)
                 .frame(maxWidth: .infinity)
-                .clipped()
-                Picker("Seconds", selection: secondsPart) {
-                    ForEach(0..<60, id: \.self) { Text("\($0) s").tag($0) }
-                }
-                .frame(maxWidth: .infinity)
-                .clipped()
+                .frame(height: 160)
+        }
+    }
+}
+
+/// A dot in the phase colour, a name and a duration, or "None".
+private struct DurationLabel: View {
+    let title: String
+    let color: Color
+    let seconds: Int
+    let isOpen: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Circle().fill(color).frame(width: 12, height: 12)
+            Text(title).foregroundStyle(Theme.text)
+            Spacer()
+            if seconds == 0 {
+                Text("None").foregroundStyle(Theme.secondary)
+            } else {
+                Text(clockText(seconds))
+                    .font(.condensed(20))
+                    .monospacedDigit()
+                    .foregroundStyle(isOpen ? color : Theme.text)
             }
-            .pickerStyle(.wheel)
-            .frame(height: 160)
+        }
+    }
+}
+
+/// Minute and second wheels in one UIKit picker, like the Clock app's timer:
+/// one control, so a swipe can't move the wrong wheel, and it writes only when the user turns it.
+private struct DurationWheels: UIViewRepresentable {
+    @Binding var seconds: Int
+    let allowsNone: Bool
+
+    func makeUIView(context: Context) -> UIPickerView {
+        let picker = UIPickerView()
+        picker.dataSource = context.coordinator
+        picker.delegate = context.coordinator
+        picker.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        return picker
+    }
+
+    func updateUIView(_ picker: UIPickerView, context: Context) {
+        context.coordinator.wheels = self
+        let rows = [seconds / 60, seconds % 60]
+        for (component, row) in rows.enumerated() where picker.selectedRow(inComponent: component) != row {
+            picker.selectRow(row, inComponent: component, animated: false)
         }
     }
 
-    private var minutes: Binding<Int> {
-        Binding { seconds / 60 } set: { seconds = clamped($0 * 60 + seconds % 60) }
-    }
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
 
-    private var secondsPart: Binding<Int> {
-        Binding { seconds % 60 } set: { seconds = clamped(seconds / 60 * 60 + $0) }
-    }
+    final class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
+        var wheels: DurationWheels
 
-    private func clamped(_ value: Int) -> Int { allowsNone ? value : max(1, value) }
+        init(_ wheels: DurationWheels) { self.wheels = wheels }
+
+        func numberOfComponents(in pickerView: UIPickerView) -> Int { 2 }
+
+        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+            component == 0 ? 100 : 60
+        }
+
+        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+            component == 0 ? "\(row) min" : "\(row) s"
+        }
+
+        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+            let total = pickerView.selectedRow(inComponent: 0) * 60 + pickerView.selectedRow(inComponent: 1)
+            wheels.seconds = wheels.allowsNone ? total : max(1, total)
+        }
+    }
 }

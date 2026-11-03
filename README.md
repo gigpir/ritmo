@@ -36,6 +36,8 @@ Ritmo isn't on the App Store, but you can build it with a free Apple ID:
 
 With a free Apple ID the signature lasts 7 days, so press Run again once a week; your workouts stay on the phone. While the week's signature is valid, `./install.sh` reinstalls the app from the terminal.
 
+To install it without Xcode, `./ipa.sh` builds an unsigned `build/Ritmo.ipa` for SideStore, AltStore or Sideloadly, which sign it with the Apple ID of whoever installs it. `./ipa.sh --signed` builds `build/Ritmo-signed.ipa`, signed with your own team for your own iPhone, to install with Apple Configurator; that file contains your Apple ID, so keep it to yourself.
+
 ## The `.ritmo` format
 
 It's JSON, so it can be written by hand; missing ids are created on import.

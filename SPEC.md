@@ -150,7 +150,9 @@ Arancio e azzurro si distinguono anche con il daltonismo rosso-verde. Il nome de
 
 In cima ci sono la durata totale e la striscia, che si aggiornano mentre modifichi.
 
-Ogni intervallo ha nome, durata (rotelle min:sec) e tipo, Work o Rest. "Add interval" aggiunge un Rest dopo un Work, e un Work dopo un Rest.
+Ogni intervallo si regola nella lista stessa: un tocco apre sotto di lui la rotella di minuti e secondi, come nell'app Orologio. Tenendolo premuto puoi rinominarlo, trasformarlo da Work in Rest (o viceversa) ed eliminarlo. "Add interval" aggiunge un Rest dopo un Work, e un Work dopo un Rest.
+
+Niente schermata separata per l'intervallo: il selettore Work/Rest che c'era dentro veniva scambiato per due schede da configurare, mentre cambiava il tipo dell'intervallo.
 
 ### 5.3 Timer in verticale: Marea
 
@@ -181,7 +183,7 @@ La colonna a destra contiene, dall'alto:
 
 ### 5.5 Settings
 
-Tre interruttori, tutti attivi di default: Voice, Vibration e Lower music during cues. Sotto, la sezione Workouts: Share all workouts e Import from Files.
+Tre interruttori, tutti attivi di default: Voice, Vibration e Lower music during cues. Sotto, la sezione Workouts: Share all workouts e Import from Files. In fondo, la versione con il numero di build, cioè data e ora di compilazione, per sapere quale versione c'è sul telefono.
 
 ### 5.6 Schermata di blocco e Dynamic Island
 
@@ -230,6 +232,7 @@ Config/               Info.plist dell'app e dell'estensione
 Tests/                test della logica
 Package.swift         serve solo a eseguire i test dal terminale
 install.sh            compila e installa sull'iPhone collegato
+ipa.sh                crea build/Ritmo.ipa (non firmato) o build/Ritmo-signed.ipa
 examples/             workout da importare
 docs/screenshots/     immagini per il README
 ```
@@ -249,6 +252,8 @@ Con un **Apple ID gratuito** (la strada scelta):
 La prima volta macOS chiede la password del Mac per usare la chiave di firma: rispondi "Consenti sempre".
 
 **Ogni settimana**, prima che la firma scada: apri `Ritmo.xcodeproj` in Xcode con l'iPhone collegato e premi ▶ (Run). Con Xcode 27 serve proprio Xcode: da Terminale il tuo Apple ID non si vede, quindi `./install.sh` reinstalla l'app (per esempio dopo una modifica) solo finché la firma della settimana è valida.
+
+**File .ipa**: `./ipa.sh` crea `build/Ritmo.ipa` non firmato e senza dati del tuo account; anche i percorsi del Mac vengono tolti dai file eseguibili. Va bene per SideStore, AltStore o Sideloadly, che lo firmano con l'Apple ID di chi lo installa, e si può dare ad altri. `./ipa.sh --signed` crea invece `build/Ritmo-signed.ipa`, firmato col tuo team per il tuo iPhone, da installare per esempio con Apple Configurator: contiene il tuo Apple ID e l'identificativo del telefono, quindi resta tuo.
 
 **Ogni 7 giorni la firma scade**: l'app non si apre più finché non la reinstalli, ma i dati restano. È una regola di Apple per tutte le app che non arrivano dall'App Store, e non ci sono eccezioni gratuite. Si può però rendere quasi invisibile:
 

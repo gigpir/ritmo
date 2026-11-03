@@ -10,6 +10,12 @@ struct SettingsView: View {
     @State private var importing = false
     @State private var importMessage: String?
 
+    /// "1.0 (20261103.1045)": install.sh and ipa.sh stamp the build with its date and time.
+    private static let version: String = {
+        let info = Bundle.main.infoDictionary ?? [:]
+        return "\(info["CFBundleShortVersionString"] as? String ?? "?") (\(info["CFBundleVersion"] as? String ?? "?"))"
+    }()
+
     var body: some View {
         NavigationStack {
             Form {
@@ -38,6 +44,10 @@ struct SettingsView: View {
                     Text("Workouts")
                 } footer: {
                     Text("Workouts travel as .ritmo files: share them, keep a copy in Files, and open one on an iPhone with Ritmo to add its workouts.")
+                }
+                Section {} footer: {
+                    Text("Ritmo \(Self.version)")
+                        .frame(maxWidth: .infinity)
                 }
             }
             .navigationTitle("Settings")
