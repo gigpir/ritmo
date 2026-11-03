@@ -62,7 +62,11 @@ To install it without Xcode, `./ipa.sh` builds an unsigned `build/Ritmo.ipa` for
 
 ## Install it on Android
 
-Ritmo for Android needs Android 8.0 or later and isn't in a store yet. To build it, open the `android` folder in Android Studio and press Run with your phone connected, or run `./gradlew installDebug` in `android` with USB debugging on.
+Ritmo for Android needs Android 8.0 or later and isn't in a store yet: download the APK from the [latest release](https://github.com/gigpir/ritmo/releases/latest) and open it on your phone. To get updates automatically, add this repository to [Obtainium](https://github.com/ImranR98/Obtainium).
+
+To build it yourself, open the `android` folder in Android Studio and press Run with your phone connected, or run `./gradlew installDebug` in `android` with USB debugging on.
+
+To give it to someone, `./apk.sh` builds `build/Ritmo-<version>.apk`, signed with your own key: send them the file, and they open it on the phone and allow the installation. The first run creates the key in `~/ritmo-release.jks` and asks you to choose its password. Keep a copy of both: a phone installs an update only when it's signed with the same key.
 
 ## The `.ritmo` format
 
